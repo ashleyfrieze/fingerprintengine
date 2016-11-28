@@ -40,9 +40,10 @@ public class Client implements IClient {
 	 * @param url      - URL of the TACO instance - for example https://fingerprintengine.scivalcontent.com/TACO7600/TacoService.svc
 	 * @param username username
 	 * @param password password of the user
+	 * @param receiveTimeoutInSeconds receive timeout in seconds
 	 */
-	public Client(String url, String username, String password) {
-		factory = new WebClientFactory(url, username, password);
+	public Client(String url, String username, String password, int receiveTimeoutInSeconds) {
+		factory = new WebClientFactory(url, username, password, receiveTimeoutInSeconds);
 	}
 
 	@Override
