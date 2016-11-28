@@ -15,6 +15,7 @@ import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxrs.client.ClientConfiguration;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 /**
  * Utility class used to Initialise and Configure the CXF <code>WebClient</code> 
@@ -24,11 +25,13 @@ public class WebClientFactory {
 	private String baseUrl;
 	private String username;
 	private String password;
+	private int receiveTimeoutInSeconds;
 	
-	public WebClientFactory(String baseUrl, String username, String password) {
+	public WebClientFactory(String baseUrl, String username, String password, int receiveTimeoutInSeconds) {
 		this.baseUrl = baseUrl;
 		this.username= username;
 		this.password = password;
+		this.receiveTimeoutInSeconds = receiveTimeoutInSeconds;
 
 //		ClientConfiguration config = WebClient.getConfig(restClient);
 //		config.getInInterceptors().add(new LoggingInInterceptor());
@@ -39,6 +42,7 @@ public class WebClientFactory {
 		WebClient threadSafeClient = WebClient.create(baseUrl, username, password, null);
 		threadSafeClient.type(requestContentType).accept(responseContentType);
 		secureClient(threadSafeClient);
+		setTimeout(threadSafeClient);
 		threadSafeClient.path(path);
 		return threadSafeClient;
 	}
@@ -46,6 +50,16 @@ public class WebClientFactory {
 	private void secureClient(WebClient webClient) {
 		HTTPConduit conduit = WebClient.getConfig(webClient).getHttpConduit();
 		disableSSLCertificateCheck(conduit);
+	}
+
+	private void setTimeout(WebClient webClient) {
+		HTTPConduit conduit = WebClient.getConfig(webClient).getHttpConduit();
+		HTTPClientPolicy policy = conduit.getClient();
+		policy.setReceiveTimeout(receiveTimeoutInMilliSeconds());
+	}
+
+	private int receiveTimeoutInMilliSeconds() {
+		return receiveTimeoutInSeconds * 1000;
 	}
 
 	private void disableSSLCertificateCheck(HTTPConduit conduit) {
