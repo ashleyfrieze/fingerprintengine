@@ -4,7 +4,7 @@
 
   <groupId>com.elsevier</groupId>
   <artifactId>fingerprintengine-client</artifactId>
-  <version>2016.10-SNAPSHOT</version>
+  <version>2017.01-RELEASE</version>
   <packaging>jar</packaging>
 
   <name>fingerprintengine-client</name>
