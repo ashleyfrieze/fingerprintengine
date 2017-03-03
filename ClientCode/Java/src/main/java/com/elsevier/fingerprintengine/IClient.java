@@ -53,4 +53,13 @@ public interface IClient {
 	 * @throws HttpException on error
 	 */
 	String executeWorkflow(String workflowId, String document) throws HttpException;
+
+	/**
+	 * Get the Fingerprint Engine resource that is at the {@code path} from the the base URL.
+	 *
+	 * @param path Path for the resource; it is added to the client's base URL
+	 * @return returned XML in a string.
+	 * @throws HttpException raised when the client cannot successfully get the resource
+	 */
+	String getResource(String path) throws HttpException;
 }

@@ -1,5 +1,7 @@
 package com.elsevier.fingerprintengine;
 
+import static javax.ws.rs.core.Response.Status.OK;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -7,7 +9,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.http.HttpException;
-import org.apache.http.client.ClientProtocolException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.XMLOutputter;
@@ -69,6 +70,21 @@ public class Client implements IClient {
 		return executePost(workflowId, document).readEntity(String.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getResource(String path) throws HttpException {
+		return executeGet(path).readEntity(String.class);
+	}
+
+	private Response executeGet(String path) throws HttpException {
+		WebClient client = makeClient(path);
+		Response response = client.get();
+		raiseExceptionWhenNotOkResponse(response);
+		return response;
+	}
+
 	private Response executeCategorizePost(String data) throws HttpException {
 		return executePost(CATEGORIZE, data);
 	}
@@ -76,11 +92,14 @@ public class Client implements IClient {
 	private Response executePost(String path, String data) throws HttpException {
 		WebClient client = makeClient(path);
 		Response response = client.post(data);
+		raiseExceptionWhenNotOkResponse(response);
+		return response;
+	}
 
-		if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+	private void raiseExceptionWhenNotOkResponse(Response response) throws HttpStatusException {
+		if (response.getStatus() != OK.getStatusCode()) {
 			throw new HttpStatusException(response.getStatus(), response.readEntity(String.class));
 		}
-		return response;
 	}
 
 	/**
