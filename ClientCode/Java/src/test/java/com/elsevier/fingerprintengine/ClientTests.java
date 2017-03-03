@@ -83,5 +83,15 @@ public class ClientTests {
 
          System.out.println("----------------------------------------");
          System.out.println(response);   
-	}	
+	}
+
+	@Test @Ignore("Only for when there's a local server")
+	public void testGetResource() throws IOException, HttpException {
+		Client client = new Client(httpUrl, username, password, receiveTimeoutInSeconds);
+
+		String resourcePath = "/";
+		String response = client.getResource(resourcePath);
+		System.out.println("----------------------------------------");
+		System.out.println(response);
+	}
 }
